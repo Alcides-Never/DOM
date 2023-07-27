@@ -11,17 +11,31 @@
 
 
 function calcular(event){
+    
+    //Previne o recarregar da página
     event.preventDefault()
 
     console.log("função executada com sucesso")
 
+    //Passo 1
     let usuario = receberValores()
 
+    //Passo 2
     let imcCalculado = calcularIMC(usuario.altura, usuario.peso)
 
+    //Passo 3
     let classificacaoIMC = classificarIMC(imcCalculado)
 
     console.log(classificacaoIMC)
+
+    //Passo 4
+    usuario = organizarDados(usuario, imcCalculado, classificacaoIMC)
+
+    //Passo 5
+    cadastrarUsuario(usuario)
+
+    //Passo 6
+    
 }
 
 function receberValores(){
@@ -68,3 +82,64 @@ function classificarIMC(imc){
         return "Obesidade"
     }
 }
+// Abaixo os parametros serve para chamar os dados de outro escopo
+function organizarDados(dadosUsuario, valorIMC, classificacaoIMC){
+    // let dataHoraAtual = new Date().toISOString()
+    // Pega a Data e Hora atual
+    let dataHoraAtual = new Intl.DateTimeFormat('pt-BR', { timeStyle: 'long', dateStyle: 'short' }).format(Date.now())
+
+    console.log(dataHoraAtual);
+
+    //Organizando Objeto para salvar
+    let dadosUsuarioAtualizado = {
+        ...dadosUsuario,
+        imc: valorIMC,
+        situacaoIMC: classificacaoIMC,
+        dataCadastro: dataHoraAtual
+    }
+
+    return dadosUsuarioAtualizado;
+}
+
+// Cadastro dos usuários
+function cadastrarUsuario(dadosUsuario){
+    let listaUsuarios = []
+
+    //Este comando insere o dado no base do navegador
+    // localStorage.setItem("nomeUsuario", "Thiago")
+
+    // if(localStorage.getItem("usuariosCadastrados") != mull ){
+    //     listaUsuarios = localStorage.getItem("usuariosCadastrados") 
+    // }
+
+
+    //Se houver uma lista de usuarios no locaStorage, carrega isso para variavel listaUsuarios
+    if(localStorage.getItem("usuariosCadastrados") != null ){
+        listaUsuarios = JSON.parse(localStorage.getItem("usuariosCadastrados")) 
+    }
+
+    //Adiciona o usuario na lista de usuarios
+    listaUsuarios.push(dadosUsuario)
+
+    // salva a listaUsuarios no localStorage
+    localStorage.setItem("usuariosCadastrados", JSON.stringify(listaUsuarios))
+
+}
+
+function carregarUsuarios(){
+    let listaCarregada = []
+
+    if(localStorage.getItem("usuariosCadastrados") != null){
+        listaCarregada = JSON.parse(localStorage.getItem("usuariosCadastrados"))
+    }
+
+    if(listaCarregada.length == 0){
+        // Se nao tiver nenhum usuario cadastrados, mostrar mensagem
+        let tabela = document.getElementById("corpo-tabela")
+
+        tabela.innerHTML = "Nenhum usuario cadastrado"
+    }
+    console.log(listaCarregada)
+}
+
+window.addEventListener("DOMContentLoaded", () => carregarUsuarios())
