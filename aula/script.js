@@ -34,7 +34,7 @@ function calcular(event){
     //Passo 5
     cadastrarUsuario(usuario)
 
-    //Passo 6
+    window.location.reload()
     
 }
 
@@ -137,9 +137,44 @@ function carregarUsuarios(){
         // Se nao tiver nenhum usuario cadastrados, mostrar mensagem
         let tabela = document.getElementById("corpo-tabela")
 
-        tabela.innerHTML = "Nenhum usuario cadastrado"
+        tabela.innerHTML = `<tr class='linha-mensagem'>
+            <td colspan="6">Nenhum usuario cadastrado :( </td>
+        </tr>`
+    } else{
+        //montar conteudo da tela
+        montarTabela(listaCarregada)
     }
     console.log(listaCarregada)
 }
 
 window.addEventListener("DOMContentLoaded", () => carregarUsuarios())
+
+
+//Passo 7 
+function montarTabela(listaUsuarios){
+    let tabela = document.getElementById("corpo-tabela")
+
+    let template = ""
+
+    listaUsuarios.forEach(usuario => {
+        template += `<tr>
+                    <td data-cell="nome">${usuario.nome}</td>
+                    <td data-cell="altura">${usuario.altura}</td>
+                    <td data-cell="peso">${usuario.peso}</td>
+                    <td data-cell="valor do IMC">${usuario.imc.toFixed(2)}</td>
+                    <td data-cell="classificação do IMC">${usuario.situacaoIMC}</td>
+                    <td data-cell="data de cadastro">${usuario.dataCadastro}</td>
+                </tr>`
+    })
+
+    tabela.innerHTML = template;
+}
+
+function deletarRegistros(){
+    
+    // Remove o item do localStorage
+    localStorage.removeItem("usuariosCadastrados")
+
+    //rECARREGA A pAGINA
+    window.location.reload()
+}
